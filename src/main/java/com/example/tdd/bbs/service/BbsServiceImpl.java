@@ -40,6 +40,6 @@ public class BbsServiceImpl implements BbsService {
 
   @Override
   public void delete(final long id) {
-
+    bbsRepository.delete(id);
   }
 }

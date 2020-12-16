@@ -1,6 +1,7 @@
 package com.example.tdd.bbs.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import com.example.tdd.bbs.model.BbsConverter;
 import com.example.tdd.bbs.model.BbsDto;
@@ -33,14 +34,17 @@ public class BbsServiceImplTest {
   @Before
   public void setUp() {
     bbsEntities = IntStream.range(0, 20)
-        .mapToObj(i -> BbsDto
-            .builder()
-            .writer("wook")
-            .title("제목")
-            .content("내용")
-            .createTime(LocalDateTime.now())
-            .build())
-        .map(BbsConverter::convertToBbsEntityForAdd)
+        .mapToObj(i ->
+            BbsConverter.convertToBbsEntityForAdd(
+                BbsDto
+                    .builder()
+                    .writer("wook")
+                    .title("제목")
+                    .content("내용")
+                    .createTime(LocalDateTime.now())
+                    .build()
+            )
+        )
         .collect(Collectors.toList());
 
     bbsRepository.save(bbsEntities);
@@ -151,5 +155,13 @@ public class BbsServiceImplTest {
 
   @Test
   public void delete() {
+    //given
+    final long id = 7;
+
+    //when
+    bbsRepository.delete(id);
+
+    //then
+    assertNull(bbsRepository.findOne(id));
   }
 }
