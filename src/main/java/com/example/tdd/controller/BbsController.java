@@ -3,7 +3,6 @@ package com.example.tdd.controller;
 import com.example.tdd.bbs.model.BbsEntity;
 import com.example.tdd.bbs.service.BbsService;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

@@ -1,6 +1,7 @@
 package com.example.tdd.bbs.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import com.example.tdd.bbs.model.BbsDto;
 import com.example.tdd.bbs.model.BbsEntity;
@@ -88,21 +89,69 @@ public class BbsServiceTest {
   @Test
   public void add() {
     //given
+    final String writer = "tester";
+    final String title = "테스트 제목";
+    final String content = "테스트 내용";
+
+    final BbsDto bbsDto = BbsDto
+        .builder()
+        .writer(writer)
+        .title(title)
+        .content(content)
+        .createTime(LocalDateTime.now())
+        .build();
+
     //when
+    final BbsEntity bbsEntity = bbsService.add(bbsDto);
+
     //then
+    assertEquals(writer, bbsEntity.getWriter());
+    assertEquals(title, bbsEntity.getTitle());
+    assertEquals(content, bbsEntity.getContent());
+
+    final BbsEntity detail = bbsService.detail(bbsEntity.getId())
+        .orElseThrow(() -> new RuntimeException("해당 글이 없습니다."));
+
+    assertEquals(bbsEntity.getId(), detail.getId());
+
+    System.out.println("detail = " + detail);
   }
 
   @Test
   public void edit() {
     //given
+    final long id = 7;
+    final String title = "타이틀 변경";
+    final String content = "내용 변경";
+    final BbsDto bbsDto = BbsDto
+        .builder()
+        .id(id)
+        .title(title)
+        .content(content)
+        .updateTime(LocalDateTime.now())
+        .build();
+
     //when
+    bbsService.edit(bbsDto);
+    final BbsEntity editBbsEntity = bbsService.detail(id)
+        .orElseThrow(() -> new RuntimeException("해당 글이 없습니다."));
+
     //then
+    assertEquals(title, editBbsEntity.getTitle());
+    assertEquals(content, editBbsEntity.getContent());
+
+    System.out.println("editBbsEntity = " + editBbsEntity);
   }
 
   @Test
   public void delete() {
     //given
+    final long id = 7;
+
     //when
+    bbsService.delete(id);
+
     //then
+    assertFalse(bbsService.detail(id).isPresent());
   }
 }
