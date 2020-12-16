@@ -1,7 +1,10 @@
 package com.example.tdd.controller;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,6 +13,7 @@ import com.example.tdd.bbs.model.BbsDto;
 import com.example.tdd.bbs.model.BbsEntity;
 import com.example.tdd.bbs.service.BbsService;
 import com.example.tdd.controller.param.BbsAddParam;
+import com.example.tdd.controller.param.BbsEditParam;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -123,5 +128,58 @@ public class BbsControllerTest {
         .andExpect(jsonPath("$.title", Matchers.is(title)))
         .andExpect(jsonPath("$.content", Matchers.is(content)))
         .andDo(print());
+  }
+
+  @Test
+  public void edit() throws Exception {
+    //given
+    final int id = 1;
+    final String title = "게시판 제목 변경";
+    final String content = "게시판 내용 변경";
+    final String param = new ObjectMapper()
+        .valueToTree(
+            BbsEditParam
+                .builder()
+                .title(title)
+                .content(content)
+                .build()
+        )
+        .toString();
+
+    mockMvc
+        //when
+        .perform(
+            put("/bbs/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .content(param)
+        )
+        //then
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", Matchers.is(true)))
+        .andDo(print());
+
+    final BbsEntity bbsEntity = bbsService.detail(id).orElseThrow(RuntimeException::new);
+    assertEquals(title, bbsEntity.getTitle());
+    assertEquals(content, bbsEntity.getContent());
+    System.out.println("bbsEntity = " + bbsEntity);
+  }
+
+  @Test
+  public void delete() throws Exception {
+    //given
+    final int id = 1;
+
+    mockMvc
+        //when
+        .perform(
+            MockMvcRequestBuilders.delete("/bbs/{id}", id)
+        )
+        //then
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", Matchers.is(true)))
+        .andDo(print());
+
+    assertFalse(bbsService.detail(id).isPresent());
   }
 }
