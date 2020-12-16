@@ -2,14 +2,13 @@ package com.example.tdd.controller;
 
 import com.example.tdd.bbs.model.BbsEntity;
 import com.example.tdd.bbs.service.BbsService;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import com.example.tdd.controller.param.BbsListParam;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,29 +21,12 @@ public class BbsController {
 
   @GetMapping("")
   public ResponseEntity<Page<BbsEntity>> list(@ModelAttribute final BbsListParam bbsListParam) {
-    System.out.println("bbsListParam = " + bbsListParam);
     return ResponseEntity.ok(bbsService.list(bbsListParam));
   }
 
-  @ToString
-  @NoArgsConstructor
-  public static class BbsListParam {
-
-    @Builder
-    public BbsListParam(final int page, final int size) {
-      this.page = page;
-      this.size = size;
-    }
-
-    private int page;
-    private int size;
-
-    public int getPage() {
-      return Math.max(page, 1);
-    }
-
-    public int getSize() {
-      return Math.max(size, 10);
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<BbsEntity> detail(@PathVariable final long id) {
+    return ResponseEntity
+        .ok(bbsService.detail(id).orElseThrow(() -> new RuntimeException("해당 게시물이 없습니다.")));
   }
 }

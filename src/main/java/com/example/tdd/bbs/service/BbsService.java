@@ -2,7 +2,7 @@ package com.example.tdd.bbs.service;
 
 import com.example.tdd.bbs.model.BbsDto;
 import com.example.tdd.bbs.model.BbsEntity;
-import com.example.tdd.controller.BbsController.BbsListParam;
+import com.example.tdd.controller.param.BbsListParam;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 

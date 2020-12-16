@@ -5,8 +5,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.tdd.bbs.model.BbsDto;
+import com.example.tdd.bbs.model.BbsEntity;
+import com.example.tdd.bbs.service.BbsService;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,12 +30,26 @@ public class BbsControllerTest {
   @Autowired
   MockMvc mockMvc;
 
-  @Before
-  public void setUp() throws Exception {
-  }
+  @Autowired
+  BbsService bbsService;
 
-  @After
-  public void tearDown() throws Exception {
+  List<BbsEntity> bbsEntities;
+
+  @Before
+  public void setUp() {
+    bbsEntities = IntStream.range(0, 20)
+        .mapToObj(i ->
+            bbsService.add(
+                BbsDto
+                    .builder()
+                    .writer("wook")
+                    .title("제목")
+                    .content("내용")
+                    .createTime(LocalDateTime.now())
+                    .build()
+            )
+        )
+        .collect(Collectors.toList());
   }
 
   @Test
@@ -41,7 +61,18 @@ public class BbsControllerTest {
                 .param("size", "10")
         )
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.content", Matchers.hasSize(0)))
+        .andExpect(jsonPath("$.content", Matchers.hasSize(10)))
+        .andDo(print());
+  }
+
+  @Test
+  public void detail() throws Exception {
+    mockMvc
+        .perform(
+            get("/bbs/{id}", 1)
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", Matchers.is(1)))
         .andDo(print());
   }
 }
