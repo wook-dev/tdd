@@ -25,7 +25,7 @@ public class BbsServiceImpl implements BbsService {
 
   @Override
   public Optional<BbsEntity> detail(final long id) {
-    return Optional.empty();
+    return Optional.ofNullable(bbsRepository.findOne(id));
   }
 
   @Override
