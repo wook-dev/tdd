@@ -26,7 +26,7 @@ public final class BbsDto {
 
   private LocalDateTime updateTime;
 
-  @Builder(builderMethodName = "addBuilder")
+  @Builder
   public BbsDto(final long id, final String writer, final String title, final String content,
       final LocalDateTime createTime, final LocalDateTime updateTime) {
     this.id = id;
@@ -34,5 +34,6 @@ public final class BbsDto {
     this.title = title;
     this.content = content;
     this.createTime = createTime;
+    this.updateTime = updateTime;
   }
 }

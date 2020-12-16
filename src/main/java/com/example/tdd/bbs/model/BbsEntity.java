@@ -10,9 +10,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Entity
@@ -22,7 +24,7 @@ public class BbsEntity {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
-  @Column
+  @Column(updatable = false)
   private String writer;
 
   @Column
@@ -38,9 +40,9 @@ public class BbsEntity {
   private LocalDateTime updateTime;
 
   @Builder
-  public BbsEntity(final String writer, final String title, final String content,
-      final LocalDateTime createTime,
-      final LocalDateTime updateTime) {
+  public BbsEntity(final long id, final String writer, final String title, final String content,
+      final LocalDateTime createTime, final LocalDateTime updateTime) {
+    this.id = id;
     this.writer = writer;
     this.title = title;
     this.content = content;
