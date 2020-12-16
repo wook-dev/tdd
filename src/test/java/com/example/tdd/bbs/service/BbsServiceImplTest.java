@@ -85,6 +85,29 @@ public class BbsServiceImplTest {
 
   @Test
   public void add() {
+    //given
+    final String writer = "tester";
+    final String title = "테스트 제목";
+    final String content = "테스트 내용";
+
+    //when
+    final BbsEntity bbsEntity = bbsService.add(BbsDto
+        .addBuilder()
+        .writer(writer)
+        .title(title)
+        .content(content)
+        .createTime(LocalDateTime.now())
+        .build());
+
+    //then
+    assertEquals(writer, bbsEntity.getWriter());
+    assertEquals(title, bbsEntity.getTitle());
+    assertEquals(content, bbsEntity.getContent());
+
+    final BbsEntity detail = bbsRepository.findOne(bbsEntity.getId());
+    assertEquals(bbsEntity.getId(), detail.getId());
+
+    System.out.println("detail = " + detail);
   }
 
   @Test
