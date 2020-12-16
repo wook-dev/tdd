@@ -9,6 +9,7 @@ import com.example.tdd.bbs.repository.BbsRepository;
 import com.example.tdd.controller.BbsController.BbsListParam;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.junit.Before;
@@ -17,14 +18,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class BbsServiceImplTest {
-
-  @Autowired
-  BbsService bbsService;
 
   @Autowired
   BbsRepository bbsRepository;
@@ -59,7 +58,8 @@ public class BbsServiceImplTest {
         .build();
 
     //when
-    final Page<BbsEntity> entityPage = bbsService.list(bbsListParam);
+    final Page<BbsEntity> entityPage = bbsRepository
+        .findAll(new PageRequest(bbsListParam.getPage() - 1, bbsListParam.getSize()));
 
     //then
     assertEquals(bbsEntities.size(), entityPage.getTotalElements());
@@ -81,6 +81,16 @@ public class BbsServiceImplTest {
 
   @Test
   public void detail() {
+    //given
+    final long id = 7;
+
+    //when
+    final BbsEntity bbsEntity = Optional.ofNullable(bbsRepository.findOne(id))
+        .orElseThrow(() -> new RuntimeException("해당 글이 없습니다."));
+
+    //then
+    assertEquals(id, bbsEntity.getId());
+    System.out.println("bbsEntity = " + bbsEntity);
   }
 
   @Test
@@ -90,14 +100,16 @@ public class BbsServiceImplTest {
     final String title = "테스트 제목";
     final String content = "테스트 내용";
 
-    //when
-    final BbsEntity bbsEntity = bbsService.add(BbsDto
+    final BbsDto bbsDto = BbsDto
         .addBuilder()
         .writer(writer)
         .title(title)
         .content(content)
         .createTime(LocalDateTime.now())
-        .build());
+        .build();
+
+    //when
+    final BbsEntity bbsEntity = bbsRepository.save(BbsConverter.convertToAdd(bbsDto));
 
     //then
     assertEquals(writer, bbsEntity.getWriter());
