@@ -4,8 +4,8 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString
 @NoArgsConstructor
+@ToString
 public class BbsListParam {
 
   @Builder

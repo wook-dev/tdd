@@ -1,5 +1,7 @@
 package com.example.tdd.bbs.model;
 
+import com.example.tdd.controller.param.BbsAddParam;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +25,16 @@ public class BbsConverter {
         .title(bbsDto.getTitle())
         .content(bbsDto.getContent())
         .updateTime(bbsDto.getUpdateTime())
+        .build();
+  }
+
+  public static BbsDto convertToBbsDtoForAdd(final BbsAddParam bbsAddParam) {
+    return BbsDto
+        .builder()
+        .writer(bbsAddParam.getWriter())
+        .title(bbsAddParam.getTitle())
+        .content(bbsAddParam.getContent())
+        .createTime(LocalDateTime.now())
         .build();
   }
 }
