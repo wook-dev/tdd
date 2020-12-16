@@ -7,7 +7,7 @@ import com.example.tdd.bbs.model.BbsConverter;
 import com.example.tdd.bbs.model.BbsDto;
 import com.example.tdd.bbs.model.BbsEntity;
 import com.example.tdd.bbs.repository.BbsRepository;
-import com.example.tdd.controller.BbsController.BbsListParam;
+import com.example.tdd.controller.param.BbsListParam;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
