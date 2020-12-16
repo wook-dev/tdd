@@ -34,13 +34,13 @@ public class BbsServiceImplTest {
   public void setUp() {
     bbsEntities = IntStream.range(0, 20)
         .mapToObj(i -> BbsDto
-            .addBuilder()
+            .builder()
             .writer("wook")
             .title("제목")
             .content("내용")
             .createTime(LocalDateTime.now())
             .build())
-        .map(BbsConverter::convertToAdd)
+        .map(BbsConverter::convertToBbsEntityForAdd)
         .collect(Collectors.toList());
 
     bbsRepository.save(bbsEntities);
@@ -101,7 +101,7 @@ public class BbsServiceImplTest {
     final String content = "테스트 내용";
 
     final BbsDto bbsDto = BbsDto
-        .addBuilder()
+        .builder()
         .writer(writer)
         .title(title)
         .content(content)
@@ -109,7 +109,7 @@ public class BbsServiceImplTest {
         .build();
 
     //when
-    final BbsEntity bbsEntity = bbsRepository.save(BbsConverter.convertToAdd(bbsDto));
+    final BbsEntity bbsEntity = bbsRepository.save(BbsConverter.convertToBbsEntityForAdd(bbsDto));
 
     //then
     assertEquals(writer, bbsEntity.getWriter());
@@ -124,6 +124,29 @@ public class BbsServiceImplTest {
 
   @Test
   public void edit() {
+    //given
+    final long id = 7;
+    final String title = "타이틀 변경";
+    final String content = "내용 변경";
+    final BbsEntity bbsEntity = BbsConverter.convertToBbsEntityForEdit(
+        BbsDto
+            .builder()
+            .id(id)
+            .title(title)
+            .content(content)
+            .updateTime(LocalDateTime.now())
+            .build()
+    );
+
+    //when
+    bbsRepository.save(bbsEntity);
+    final BbsEntity editBbsEntity = bbsRepository.findOne(id);
+
+    //then
+    assertEquals(title, editBbsEntity.getTitle());
+    assertEquals(content, editBbsEntity.getContent());
+
+    System.out.println("editBbsEntity = " + editBbsEntity);
   }
 
   @Test

@@ -30,12 +30,12 @@ public class BbsServiceImpl implements BbsService {
 
   @Override
   public BbsEntity add(final BbsDto bbsDto) {
-    return bbsRepository.save(BbsConverter.convertToAdd(bbsDto));
+    return bbsRepository.save(BbsConverter.convertToBbsEntityForAdd(bbsDto));
   }
 
   @Override
   public void edit(final BbsDto bbsDto) {
-
+    bbsRepository.save(BbsConverter.convertToBbsEntityForEdit(bbsDto));
   }
 
   @Override
